@@ -8,7 +8,7 @@ define(['rb.vector'],function (Vector) {
         this.radius = 3;
 
         this.location       = new Vector();
-        this.velocity       = new Vector(Math.random(),Math.random());
+        this.velocity       = new Vector(Math.random(),Math.random(),Math.random());
         this.acceleration   = new Vector();
 
         this.r = 0;
@@ -17,7 +17,7 @@ define(['rb.vector'],function (Vector) {
 
         this.location.x = Math.floor(Math.random()*this.game.width);
         this.location.y = Math.floor(Math.random()*this.game.height);
-        this.location.z = Math.floor(Math.random()*10);
+        this.location.z = 0;
 
         this.desiredSeparation = 25;
         this.neighborDistance = 50;
@@ -77,11 +77,11 @@ define(['rb.vector'],function (Vector) {
         // Depth
         if( location.z < 0 ){
             location.z = 1;
-            this.velocity.z *-1.5;
+            this.velocity.z *= -1;
         }
         if( location.z > 100 ){
             location.z = 99;
-            this.velocity.z *-1.5;
+            this.velocity.z *= -1;
         }
 
         return location;
