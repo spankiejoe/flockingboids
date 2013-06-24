@@ -1,9 +1,15 @@
 define(function () {
 
-    function Vector(x, y, z) {
-        this.x = x || 0;
-        this.y = y || 0;
-        this.z = z || 0;
+    function Vector(v, y, z) {
+        if( arguments.length === 1){
+            this.x = v.x || 0;
+            this.y = v.y || 0;
+            this.z = v.z || 0;
+        } else {
+            this.x = v || 0;
+            this.y = y || 0;
+            this.z = z || 0;
+        }
     }
 
     Vector.prototype.add = function(v) {

@@ -7,7 +7,7 @@ define(function () {
         this.settings = options || {};
 
         // Settings
-        this.fps = this.settings.fps || 120;
+        this.fps = this.settings.fps || 60;
         this.interval = 1000.0 / this.fps;
         this.lastFrame = new Date().getTime();
         this.settings.pixelRatio = 1;
@@ -92,8 +92,9 @@ define(function () {
     exports.prototype.drawStats = function (context) {
         if (this.stats.show) {
             context.fillStyle = 'white';
-            context.font = '10px sans-serif';
-            context.fillText("FPS " + Math.min(this.fps, Math.round(this.stats.fps)), 15, 20);
+            context.font = '10px Monaco, monospace';
+            context.fillText("FPS   " + Math.min(this.fps, Math.round(this.stats.fps)), 15, 20);
+            context.fillText("Boids " + Math.round(this.game.flock.length), 15, 32);
         }
     };
 

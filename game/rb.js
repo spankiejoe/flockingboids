@@ -11,25 +11,15 @@ define(['rb.boid'], function (Boid) {
 
         this.flock = [];//new Flock();
 
-        // this.flock.push(new Boid(this));
-        // this.flock.push(new Boid(this));
-        // this.flock.push(new Boid(this));
-        // this.flock.push(new Boid(this));
-
-        // for (var i = 0; i < 100; i++) {
-        //     this.flock.push(new Boid(this));
-        // };
-        
-
         this.runner.start();
 
     };
 
     exports.prototype.update = function (time) {
 
-        if(this.runner.stats.fps < 120 && this.flock.length > 10){
+        if(this.runner.stats.fps < 60 && this.flock.length > 10){
             this.flock.pop();
-        } else if( this.runner.stats.fps > 240 ){
+        } else if( this.runner.stats.fps > 120 ){
             this.flock.push(new Boid(this));
         }
 
