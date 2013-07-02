@@ -3,7 +3,7 @@ Flocking Boids
 
 ![Alt text](/readme/screenshot.png "Flocking Boids")
 
-*Flocking Boids* is a javascript and canvas implementation of Craig Reynold's Boids. Boids, developed in 1986, is an artificial life program which simulates the flocking behaviour of birds.
+**Flocking Boids** is a javascript and canvas implementation of Craig Reynold's Boids. Boids, developed in 1986, is an artificial life program which simulates the flocking behaviour of birds.
 
 http://jan.jarfalk.se/playground/flockingboids/
 
