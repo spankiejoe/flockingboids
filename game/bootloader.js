@@ -1,4 +1,4 @@
-requirejs(['runner', 'rb'],
-    function (Runner, ReynoldsBoids) {
-        new Runner({'game': ReynoldsBoids});
+requirejs(['components/runner', 'fb'],
+    function (Runner, FlockingBoids) {
+        new Runner({'game': FlockingBoids});
 });

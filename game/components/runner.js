@@ -7,7 +7,7 @@ define(function () {
         this.settings = options || {};
 
         // Settings
-        this.fps = this.settings.fps || 60;
+        this.fps = this.settings.fps || 120;
         this.interval = 1000.0 / this.fps;
         this.lastFrame = new Date().getTime();
         this.settings.pixelRatio = 1;

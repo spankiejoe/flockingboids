@@ -1,4 +1,8 @@
-define(['rb.vector'],function (Vector) {
+define(['components/vector'],function (Vector) {
+
+    function remap(value, low1, high1, low2, high2) {
+        return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+    }
 
     var Boid = function (game) {
 
@@ -58,12 +62,30 @@ define(['rb.vector'],function (Vector) {
     };
 
     Boid.prototype.draw = function (context) {
+        var theta = this.velocity.heading2D();
         var opacity = this.location.z/100
-        context.fillStyle = 'rgba(255,255,255,' + opacity + ')';
+
+        context.save();
+        context.translate(this.location.x, this.location.y);
+
+        // console.log(this.velocity.x + this.velocity.y);
+        var speed = this.velocity.distance(new Vector());
+
+        var value = Math.floor( remap(speed, 0, 2, 0, 360) );
+        context.fillStyle = 'hsla(' + value + ',50%,50%,' + opacity +')';
+        
+        // context.strokeStyle = 'rgba(255,255,255,' + opacity + ')';
+        // context.lineWidth = 1;
         context.beginPath();
-        context.arc(this.location.x, this.location.y, this.location.z/15, 0, 2*Math.PI, true);
+        context.arc(0, 0, 6*(this.location.z/100), 0, 2*Math.PI, true);
+        // context.moveTo(0,0);
+        // context.lineTo(10,10);
+        // context.stroke();
         context.fill();
         context.closePath();
+
+        context.restore();
+
     };
 
     Boid.prototype.bound = function( location ) {

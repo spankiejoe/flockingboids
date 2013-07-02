@@ -1,4 +1,4 @@
-define(['rb.boid'], function (Boid) {
+define(['fb.boid'], function (Boid) {
 
     var exports = function (runner) {
 
@@ -9,7 +9,7 @@ define(['rb.boid'], function (Boid) {
         this.height = this.runner.height;
         this.mouse = {'x':0,'y':0};
 
-        this.flock = [];//new Flock();
+        this.flock = [];
 
         this.runner.start();
 
@@ -17,9 +17,9 @@ define(['rb.boid'], function (Boid) {
 
     exports.prototype.update = function (time) {
 
-        if(this.runner.stats.fps < 60 && this.flock.length > 10){
+        if(this.runner.stats.fps < 120 && this.flock.length > 10){
             this.flock.pop();
-        } else if( this.runner.stats.fps > 120 ){
+        } else if( this.runner.stats.fps > 240 ){
             this.flock.push(new Boid(this));
         }
 

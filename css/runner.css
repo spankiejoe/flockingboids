@@ -5,9 +5,3 @@ body, html, canvas {
     margin: 0;
     background: #000;
 }
-
-.project-info {
-	position:absolute;
-	bottom:12px;
-	left:12px;
-}
