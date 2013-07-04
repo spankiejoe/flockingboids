@@ -79,7 +79,16 @@ define(function () {
         this.bufferContext.clearRect(0, 0, this.width, this.height);
         this.game.draw(this.bufferContext);
         this.drawStats(this.bufferContext);
-        this.canvasContext.clearRect(0, 0, this.width, this.height);
+        
+        // This will give the boids their tail
+        this.canvasContext.globalCompositeOperation = "source-over";
+        this.canvasContext.fillStyle = "rgba(0,0,0,0.25)";
+        this.canvasContext.fillRect(0,0,this.canvas.width,this.canvas.height);
+        this.canvasContext.globalCompositeOperation = "lighter";    
+
+        // Clear frame around stats
+        this.canvasContext.clearRect(15, 10, 60, 25);
+
         this.canvasContext.drawImage(this.buffer, 0, 0);
     };
 
