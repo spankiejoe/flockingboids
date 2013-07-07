@@ -1,6 +1,7 @@
-define(function () {
+define(['components/gui'], function (GUI) {
 
-    var exports = function (options) {
+
+    var exports = function (Game, options) {
 
         "use strict";
 
@@ -11,6 +12,21 @@ define(function () {
         this.interval = 1000.0 / this.fps;
         this.lastFrame = new Date().getTime();
         this.settings.pixelRatio = 1;
+
+        this.settings.radius = options.radius || 5;
+        this.settings.maxSpeed = options.maxSpeed || 2;
+        this.settings.boids = options.boids || 200;
+        this.settings.maxForce = options.maxForce || 0.02;
+        this.settings.neighborDistance = options.neighborDistance || 50;
+        this.settings.desiredSeparation = options.desiredSeparation || 25;
+
+        this.gui = new GUI();
+        this.gui.add(this.settings, 'radius', 0, 100);
+        this.gui.add(this.settings, 'maxSpeed', 0, 30);
+        this.gui.add(this.settings, 'boids', 0, 1000);
+        this.gui.add(this.settings, 'maxForce', -1, 1);
+        this.gui.add(this.settings, 'neighborDistance', 0, 200);
+        this.gui.add(this.settings, 'desiredSeparation', 0, 200);
 
         // Stats
         this.stats = {
@@ -27,7 +43,7 @@ define(function () {
         this.setDimensions( this.canvas );
 
         // GO!
-        this.game = new this.settings.game(this);
+        this.game = new Game(this, this.settings);
 
         window.addEventListener('resize', this.handleWindowResize.bind(this));
 
@@ -36,12 +52,6 @@ define(function () {
     exports.prototype.setDimensions = function(canvas) {
         this.width = this.canvas.offsetWidth;
         this.height = this.canvas.offsetHeight;
-
-        // if( window.devicePixelRatio ){
-        //     this.settings.pixelRatio = window.devicePixelRatio;
-        //     this.width = this.width * window.devicePixelRatio;
-        //     this.height = this.height * window.devicePixelRatio;
-        // }
 
         // Set dimensions.
         this.canvas.width = this.width;
@@ -66,8 +76,6 @@ define(function () {
         var start = new Date().getTime();
         this.update((start - this.lastFrame) / 1000.0);
         this.draw();
-        var end = new Date().getTime();
-        this.updateStats(end - start);
         this.lastFrame = start;
     };
 
@@ -78,7 +86,6 @@ define(function () {
     exports.prototype.draw = function () {
         this.bufferContext.clearRect(0, 0, this.width, this.height);
         this.game.draw(this.bufferContext);
-        this.drawStats(this.bufferContext);
         
         // This will give the boids their tail
         this.canvasContext.globalCompositeOperation = "source-over";
@@ -92,20 +99,6 @@ define(function () {
         this.canvasContext.drawImage(this.buffer, 0, 0);
     };
 
-    exports.prototype.updateStats = function (time) {
-        if (this.stats.show) {
-            this.stats.fps = 1000 / time;
-        }
-    };
-
-    exports.prototype.drawStats = function (context) {
-        if (this.stats.show) {
-            context.fillStyle = 'white';
-            context.font = '10px Monaco, monospace';
-            context.fillText("FPS   " + Math.min(this.fps, Math.round(this.stats.fps)), 15, 20);
-            context.fillText("Boids " + Math.round(this.game.flock.length), 15, 32);
-        }
-    };
 
     exports.prototype.handleWindowResize = function(event) {
 
@@ -113,7 +106,7 @@ define(function () {
         this.setDimensions( this.canvas );
 
         // GO!
-        this.game = new this.settings.game(this);
+        // this.game = new this.settings.game(this);
 
     };
 

@@ -9,7 +9,7 @@ define(['fb.boid'], function (Boid) {
         this.height = this.runner.height;
         this.mouse = {'x':0,'y':0};
 
-        this.flock = [];
+        this.boids = [];
 
         this.runner.start();
 
@@ -17,21 +17,25 @@ define(['fb.boid'], function (Boid) {
 
     exports.prototype.update = function (time) {
 
-        if(this.runner.stats.fps < 120 && this.flock.length > 10){
-            this.flock.pop();
-        } else if( this.runner.stats.fps > 240 ){
-            this.flock.push(new Boid(this));
+        if( this.boids.length > this.runner.settings.boids ){
+            var delta = this.boids.length - this.runner.settings.boids;
+            this.boids.splice(0,delta);
+        } else if( this.boids.length < this.runner.settings.boids ){
+            var delta = this.runner.settings.boids - this.boids.length;
+            for (var i = delta - 1; i >= 0; i--) {
+                this.boids.push(new Boid(this));
+            };
         }
 
-        for (var i = this.flock.length - 1; i >= 0; i--) {
-            this.flock[i].update(time);
+        for (var i = this.boids.length - 1; i >= 0; i--) {
+            this.boids[i].update(time);
         }
     };
 
     exports.prototype.draw = function (context) {
         context.strokeRect(0, 0, this.width, this.height);
-        for (var i = this.flock.length - 1; i >= 0; i--) {
-            this.flock[i].draw(context);
+        for (var i = this.boids.length - 1; i >= 0; i--) {
+            this.boids[i].draw(context);
         }
     };
 

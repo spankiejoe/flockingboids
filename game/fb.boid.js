@@ -9,30 +9,27 @@ define(['components/vector'],function (Vector) {
         "use strict";
 
         this.game = game;
-        this.radius = 3;
+        //this.radius = 3;
 
         this.location       = new Vector();
         this.velocity       = new Vector(5*(Math.random()-0.5),5*(Math.random()-0.5),0.01);
         this.acceleration   = new Vector();
 
-        this.r = 0;
         this.maxforce = 0.03;
-        this.maxspeed = 2;
+        // this.maxspeed = 2;
 
-        this.location.x = this.game.width/2;
-        this.location.y = this.game.height/2;
+        this.location.x = this.game.runner.width/2;
+        this.location.y = this.game.runner.height/2;
         this.location.z = 0;
-
-        this.desiredSeparation = 25;
-        this.neighborDistance = 50;
 
     };
 
     Boid.prototype.update = function (time) {
+        var settings = this.game.runner.settings;
 
         var that = this;
 
-        var flocking = this.flocking(this.game.flock);
+        var flocking = this.flocking(this.game.boids);
 
         var cohesion    = flocking.cohesion; 
         var separation  = flocking.seperation;
@@ -50,7 +47,7 @@ define(['components/vector'],function (Vector) {
         this.velocity.add(this.acceleration);
         
         // Limit speed
-        this.velocity.limit(this.maxspeed);
+        this.velocity.limit(settings.maxSpeed);
         
         this.location.add(this.velocity);
         this.location = this.bound(this.location);
@@ -62,6 +59,8 @@ define(['components/vector'],function (Vector) {
     };
 
     Boid.prototype.draw = function (context) {
+        var settings = this.game.runner.settings;
+
         var theta = this.velocity.heading2D();
         var opacity = this.location.z/100
 
@@ -73,14 +72,10 @@ define(['components/vector'],function (Vector) {
 
         var value = Math.floor( remap(speed, 0, 2, 0, 360) );
         context.fillStyle = 'hsla(' + value + ',50%,50%,' + opacity +')';
-        
-        // context.strokeStyle = 'rgba(255,255,255,' + opacity + ')';
-        // context.lineWidth = 1;
+
         context.beginPath();
-        context.arc(0, 0, 6*(this.location.z/100), 0, 2*Math.PI, true);
-        // context.moveTo(0,0);
-        // context.lineTo(10,10);
-        // context.stroke();
+        context.arc(0, 0, settings.radius*(this.location.z/100), 0, 2*Math.PI, true);
+
         context.fill();
         context.closePath();
 
@@ -91,12 +86,12 @@ define(['components/vector'],function (Vector) {
     Boid.prototype.bound = function( location ) {
 
         // Width
-        if( location.x < 0 ) location.x = this.game.width;
-        if( location.x > this.game.width ) location.x = 0;
+        if( location.x < 0 ) location.x = this.game.runner.width;
+        if( location.x > this.game.runner.width ) location.x = 0;
 
         // Height
-        if( location.y < 0 ) location.y = this.game.height;
-        if( location.y > this.game.height ) location.y = 0;
+        if( location.y < 0 ) location.y = this.game.runner.height;
+        if( location.y > this.game.runner.height ) location.y = 0;
 
         // Depth
         if( location.z < 0 ){
@@ -113,6 +108,8 @@ define(['components/vector'],function (Vector) {
     };
 
     Boid.prototype.flocking = function( flock ) {
+        var settings = this.game.runner.settings;
+
         var flocking = {};
 
         var seperateSteer = new Vector();
@@ -128,7 +125,7 @@ define(['components/vector'],function (Vector) {
 
             if(distance > 0){
                 // Seperation
-                if ( distance < this.desiredSeparation ) {
+                if ( distance < settings.desiredSeparation ) {
                     var difference = new Vector();
                         difference.add(this.location).subtract(other.location);
                         difference.normalize();
@@ -138,7 +135,7 @@ define(['components/vector'],function (Vector) {
                 }
 
                 // Alignment (velocity) and Cohesion (location)
-                if ( distance < this.neighborDistance ) {
+                if ( distance < settings.neighborDistance ) {
                     velocitySum.add(other.velocity);
                     locationSum.add(other.location);
                     neighborCount++;
@@ -155,9 +152,9 @@ define(['components/vector'],function (Vector) {
         if( neighborCount > 0 ){
             velocitySum.divide(neighborCount);
             velocitySum.normalize();
-            velocitySum.multiply(this.maxspeed);
+            velocitySum.multiply(settings.maxSpeed);
             var steer = new Vector(velocitySum);
-                steer.subtract(this.velocity).limit(this.maxforce);
+                steer.subtract(this.velocity).limit(settings.maxForce);
             flocking.align = steer;
 
             // Cohesion
@@ -172,9 +169,9 @@ define(['components/vector'],function (Vector) {
         // Seperate
         if(seperateSteer.magnitude() > 0){
             seperateSteer.normalize();
-            seperateSteer.multiply(this.maxspeed);
+            seperateSteer.multiply(settings.maxSpeed);
             seperateSteer.subtract(this.velocity);
-            seperateSteer.limit(this.maxforce);
+            seperateSteer.limit(settings.maxForce);
         }
 
         flocking.seperation = seperateSteer;
@@ -185,6 +182,7 @@ define(['components/vector'],function (Vector) {
     };
 
     Boid.prototype.seek = function(target) {
+        var settings = this.game.runner.settings;
 
 
         var desired = new Vector(target);
@@ -192,11 +190,11 @@ define(['components/vector'],function (Vector) {
             desired.subtract(this.location);
 
             desired.normalize();
-            desired.multiply(this.maxspeed);
+            desired.multiply(settings.maxSpeed);
 
            // Steering = Desired minus Velocity
             var steer = desired.subtract(this.velocity);
-                steer.limit(this.maxforce);
+                steer.limit(settings.maxForce);
 
            return steer;
 
